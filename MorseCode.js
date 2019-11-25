@@ -49,22 +49,21 @@ class ScoreTree extends BSTree {
         }
         console.log(codedString)
     }
-    translateMorseLetter(code, node, parent) {
-        let array = code.split('')
-        for (let i = 0; i < array.length; i++) {
-            if (i === array.length - 1) {
-                if (array[i] === '.') {
-                    return node.leftChild.value
-                } else if (array[i] === '-') {
-                    return node.rightChild.value
+    translateMorseLetter(code, node) {
+        for (let i in code) {
+            if (code.length === 1) {
+                if (code[0] === '.') {
+                    return node.leftChild
+                } else if (code[0] === '-') {
+                    return node.rightChild
                 }                
             }
-            if (array[i] === '.') {
-                code = array.slice(1).join('')
-                node.leftChild.translateMorseLetter(code, node.leftChild, node)
-            } else if (array[i] === '-') {
-                code = array.slice(1).join('')
-                node.rightChild.translateMorseLetter(code, node.rightChild, node)
+            if (code[i] === '.') {
+                code = code.slice(1)
+                return node.leftChild.translateMorseLetter(code, node.leftChild)
+            } else if (code[i] === '-') {
+                code = code.slice(1)
+                return node.rightChild.translateMorseLetter(code, node.rightChild)
             }
         }
     }
@@ -72,7 +71,8 @@ class ScoreTree extends BSTree {
         let word = ''
         let codedLettersArray = code.split(' ')
         for (let letter of codedLettersArray) {
-            word += this.translateMorseLetter(letter, node)
+            let code = letter.split('')
+            word += this.translateMorseLetter(code, node).value
         }
         return word
     }
@@ -96,4 +96,4 @@ Object.keys(alphabet).forEach(l => {
 // morseCode.translateWord("welcome") // should print .-- . .-.. -.-. --- -- . 
 // morseCode.translateWord("elevation is cool") // should print . .-.. . ...- .- - .. --- -. /.. ... /-.-. --- --- .-.. 
 morseCode.translateMorseSentence("... --- ...", morseCode)
-// morseCode.translateMorse("-. .. -.-. . / .--- --- -... / --- -. / - .... . / .-.. . ... ... --- -.")
+morseCode.translateMorseSentence("-. .. -.-. . / .--- --- -... / --- -. / - .... . / .-.. . ... ... --- -.", morseCode)
